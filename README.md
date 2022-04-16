@@ -1,222 +1,103 @@
-# Etcher
+## Yet another SIP003 plugin for shadowsocks, based on [V2Ray](https://github.com/v2fly/v2ray-core)
 
-> Flash OS images to SD cards & USB drives, safely and easily.
+[![CircleCI](https://circleci.com/gh/shadowsocks/v2ray-plugin.svg?style=shield)](https://circleci.com/gh/shadowsocks/v2ray-plugin)
+[![Releases](https://img.shields.io/github/downloads/shadowsocks/v2ray-plugin/total.svg)](https://github.com/shadowsocks/v2ray-plugin/releases)
+[![Language: Go](https://img.shields.io/badge/go-1.17+-blue.svg)](https://github.com/shadowsocks/v2ray-plugin/search?l=go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/shadowsocks/v2ray-plugin)](https://goreportcard.com/report/github.com/shadowsocks/v2ray-plugin)
+[![License](https://img.shields.io/github/license/shadowsocks/v2ray-plugin.svg)](LICENSE)
 
-Etcher is a powerful OS image flasher built with web technologies to ensure
-flashing an SDCard or USB drive is a pleasant and safe experience. It protects
-you from accidentally writing to your hard-drives, ensures every byte of data
-was written correctly, and much more. It can also directly flash Raspberry Pi devices that support [USB device boot mode](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/device.md).
+## Build
 
-[![Current Release](https://img.shields.io/github/release/balena-io/etcher.svg?style=flat-square)](https://balena.io/etcher)
-[![License](https://img.shields.io/github/license/balena-io/etcher.svg?style=flat-square)](https://github.com/balena-io/etcher/blob/master/LICENSE)
-[![Balena.io Forums](https://img.shields.io/discourse/https/forums.balena.io/topics.svg?style=flat-square&label=balena.io%20forums)](https://forums.balena.io/c/etcher)
+* `go build`
+* Alternatively, you can grab the latest nightly from Circle CI by logging into Circle CI or adding `#artifacts` at the end of URL like such: https://circleci.com/gh/shadowsocks/v2ray-plugin/20#artifacts
 
----
+## Usage
 
-[**Download**][etcher] | [**Support**][support] | [**Documentation**][user-documentation] | [**Contributing**][contributing] | [**Roadmap**][milestones]
+See command line args for advanced usages.
 
-## Supported Operating Systems
+### Shadowsocks over websocket (HTTP)
 
-- Linux (most distros)
-- macOS 10.10 (Yosemite) and later
-- Microsoft Windows 7 and later
-
-**Note**: Etcher will run on any platform officially supported by
-[Electron][electron]. Read more in their
-[documentation][electron-supported-platforms].
-
-## Installers
-
-Refer to the [downloads page][etcher] for the latest pre-made
-installers for all supported operating systems.
-
-## Packages
-
-> [![Hosted By: Cloudsmith](https://img.shields.io/badge/OSS%20hosting%20by-cloudsmith-blue?logo=cloudsmith&style=for-the-badge)](https://cloudsmith.com) \
-Package repository hosting is graciously provided by  [Cloudsmith](https://cloudsmith.com).
-Cloudsmith is the only fully hosted, cloud-native, universal package management solution, that
-enables your organization to create, store and share packages in any format, to any place, with total
-confidence.
-
-#### Debian and Ubuntu based Package Repository (GNU/Linux x86/x64)
-
-> Detailed or alternative steps in the [instructions by Cloudsmith](https://cloudsmith.io/~balena/repos/etcher/setup/#formats-deb)
-
-1. Add Etcher Debian repository:
-
-   ```sh
-   curl -1sLf \
-      'https://dl.cloudsmith.io/public/balena/etcher/setup.deb.sh' \
-      | sudo -E bash
-   ```
-
-2. Update and install:
-
-   ```sh
-   sudo apt-get update
-   sudo apt-get install balena-etcher-electron
-   ```
-
-##### Uninstall
+On your server
 
 ```sh
-sudo apt-get remove balena-etcher-electron
-rm /etc/apt/sources.list.d/balena-etcher.list
-apt-get clean
-rm -rf /var/lib/apt/lists/*
-apt-get update
+ss-server -c config.json -p 80 --plugin v2ray-plugin --plugin-opts "server"
 ```
 
-#### Redhat (RHEL) and Fedora-based Package Repository (GNU/Linux x86/x64)
-
-> Detailed or alternative steps in the [instructions by Cloudsmith](https://cloudsmith.io/~balena/repos/etcher/setup/#formats-rpm)
-
-
-##### DNF
-
-1. Add Etcher rpm repository:
-
-   ```sh
-   curl -1sLf \
-      'https://dl.cloudsmith.io/public/balena/etcher/setup.rpm.sh' \
-      | sudo -E bash
-   ```
-
-2. Update and install:
-
-   ```sh
-   sudo dnf install -y balena-etcher-electron
-   ```
-
-###### Uninstall
+On your client
 
 ```sh
-rm /etc/yum.repos.d/balena-etcher.repo
-rm /etc/yum.repos.d/balena-etcher-source.repo
+ss-local -c config.json -p 80 --plugin v2ray-plugin
 ```
 
-##### Yum
+### Shadowsocks over websocket (HTTPS)
 
-1. Add Etcher rpm repository:
-
-   ```sh
-   curl -1sLf \
-      'https://dl.cloudsmith.io/public/balena/etcher/setup.rpm.sh' \
-      | sudo -E bash
-   ```
-
-2. Update and install:
-
-   ```sh
-   sudo yum install -y balena-etcher-electron
-   ```
-
-###### Uninstall
+On your server
 
 ```sh
-sudo yum remove -y balena-etcher-electron
-rm /etc/yum.repos.d/balena-etcher.repo
-rm /etc/yum.repos.d/balena-etcher-source.repo
+ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;tls;host=mydomain.me"
 ```
 
-#### OpenSUSE LEAP & Tumbleweed install (zypper)
-
-1. Add the repo
-
-   ```sh
-   curl -1sLf \
-   'https://dl.cloudsmith.io/public/balena/etcher/setup.rpm.sh' \
-   | sudo -E bash
-   ```
-2. Update and install
-
-   ```sh
-   sudo zypper up
-   sudo zypper install balena-etcher-electron
-   ```
-
-##### Uninstall
+On your client
 
 ```sh
-sudo zypper rm balena-etcher-electron
-# remove the repo
-sudo zypper rr balena-etcher
-sudo zypper rr balena-etcher-source
+ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "tls;host=mydomain.me"
 ```
 
-#### Solus (GNU/Linux x64)
+### Shadowsocks over quic
+
+On your server
 
 ```sh
-sudo eopkg it etcher
+ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;mode=quic;host=mydomain.me"
 ```
 
-##### Uninstall
+On your client
 
 ```sh
-sudo eopkg rm etcher
+ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "mode=quic;host=mydomain.me"
 ```
 
-#### Arch/Manjaro Linux (GNU/Linux x64)
+### Shadowsocks over gRPC
 
-Etcher is offered through the Arch User Repository and can be installed on both Manjaro and Arch systems. You can compile it from the source code in this repository using [`balena-etcher`](https://aur.archlinux.org/packages/balena-etcher/). The following example uses a common AUR helper to install the latest release:
+On your server
 
 ```sh
-yay -S balena-etcher
+ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;mode=grpc"
 ```
 
-##### Uninstall
+On your client
 
 ```sh
-yay -R balena-etcher
+ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "mode=grpc"
 ```
 
-#### Brew (macOS)
+### Shadowsocks over gRPC with TLS
 
-**Note**: Etcher has to be updated manually to point to new versions,
-so it might not refer to the latest version immediately after an Etcher
-release.
+On your server
 
 ```sh
-brew install balenaetcher
+ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;mode=grpc;tls;host=mydomain.me"
 ```
 
-##### Uninstall
+On your client
 
 ```sh
-brew uninstall balenaetcher
+ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "tls;mode=grpc;host=mydomain.me"
 ```
 
-#### Chocolatey (Windows)
+### Issue a cert for TLS and QUIC
 
-This package is maintained by [@majkinetor](https://github.com/majkinetor), and
-is kept up to date automatically.
+`v2ray-plugin` will look for TLS certificates signed by [acme.sh](https://github.com/acmesh-official/acme.sh) by default.
+Here's some sample commands for issuing a certificate using CloudFlare.
+You can find commands for issuing certificates for other DNS providers at acme.sh.
 
 ```sh
-choco install etcher
+curl https://get.acme.sh | sh
+~/.acme.sh/acme.sh --issue --dns dns_cf -d mydomain.me
 ```
 
-##### Uninstall
+Alternatively, you can specify path to your certificates using option `cert` and `key`.
 
-```sh
-choco uninstall etcher
-```
+### Use `certRaw` to pass certificate
 
-## Support
-
-If you're having any problem, please [raise an issue][newissue] on GitHub, and
-the balena.io team will be happy to help.
-
-## License
-
-Etcher is free software and may be redistributed under the terms specified in
-the [license].
-
-[etcher]: https://balena.io/etcher
-[electron]: https://electronjs.org/
-[electron-supported-platforms]: https://electronjs.org/docs/tutorial/support#supported-platforms
-[support]: https://github.com/balena-io/etcher/blob/master/SUPPORT.md
-[contributing]: https://github.com/balena-io/etcher/blob/master/docs/CONTRIBUTING.md
-[user-documentation]: https://github.com/balena-io/etcher/blob/master/docs/USER-DOCUMENTATION.md
-[milestones]: https://github.com/balena-io/etcher/milestones
-[newissue]: https://github.com/balena-io/etcher/issues/new
-[license]: https://github.com/balena-io/etcher/blob/master/LICENSE
+Instead of using `cert` to pass the certificate file, `certRaw` could be used to pass in PEM format certificate, that is the content between `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` without the line breaks.
