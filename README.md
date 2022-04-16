@@ -1,103 +1,186 @@
-## Yet another SIP003 plugin for shadowsocks, based on [V2Ray](https://github.com/v2fly/v2ray-core)
+# OpenWrt OpenMPTCProuter feed
 
-[![CircleCI](https://circleci.com/gh/shadowsocks/v2ray-plugin.svg?style=shield)](https://circleci.com/gh/shadowsocks/v2ray-plugin)
-[![Releases](https://img.shields.io/github/downloads/shadowsocks/v2ray-plugin/total.svg)](https://github.com/shadowsocks/v2ray-plugin/releases)
-[![Language: Go](https://img.shields.io/badge/go-1.17+-blue.svg)](https://github.com/shadowsocks/v2ray-plugin/search?l=go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/shadowsocks/v2ray-plugin)](https://goreportcard.com/report/github.com/shadowsocks/v2ray-plugin)
-[![License](https://img.shields.io/github/license/shadowsocks/v2ray-plugin.svg)](LICENSE)
 
-## Build
+This is the OpenWrt OpenMPTCProuter feed containing all modified and necessary packages to build the OpenMPTCProuter image.
 
-* `go build`
-* Alternatively, you can grab the latest nightly from Circle CI by logging into Circle CI or adding `#artifacts` at the end of URL like such: https://circleci.com/gh/shadowsocks/v2ray-plugin/20#artifacts
+For More information, see [https://github.com/ysurac/openmptcprouter](https://github.com/ysurac/openmptcprouter) and [https://www.openmptcprouter.com](https://www.openmptcprouter.com/).
 
-## Usage
 
-See command line args for advanced usages.
+## Glorytun
+*Source:* [https://github.com/angt/glorytun](https://github.com/angt/glorytun)
 
-### Shadowsocks over websocket (HTTP)
+*Description:* A small, simple and secure VPN
 
-On your server
 
-```sh
-ss-server -c config.json -p 80 --plugin v2ray-plugin --plugin-opts "server"
-```
+A LuCI interface was made to make it easier to use. It's used in OpenMPTCProuter to redirect ports from the VPS to the router and for UDP/ICMP traffic from the router.
 
-On your client
 
-```sh
-ss-local -c config.json -p 80 --plugin v2ray-plugin
-```
+## Shadowsocks-libev
+*Source:* [https://github.com/shadowsocks/shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
 
-### Shadowsocks over websocket (HTTPS)
+*Description:* A secure socks5 proxy
 
-On your server
 
-```sh
-ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;tls;host=mydomain.me"
-```
+MPTCP support is added in LuCI interface and init scripts. IPv6 support added.
 
-On your client
+## Shadowsocks-v2ray-plugin-bin
+*Source:* [https://github.com/shadowsocks/v2ray-plugin](https://github.com/shadowsocks/v2ray-plugin)
 
-```sh
-ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "tls;host=mydomain.me"
-```
+*Description:* V2ray plugin for Shadowsocks
 
-### Shadowsocks over quic
+Support is added in ShadowSocks LuCI interface and init scripts.
 
-On your server
 
-```sh
-ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;mode=quic;host=mydomain.me"
-```
+## Simple-obfs
+*Source:* [https://github.com/shadowsocks/simple-obfs](https://github.com/shadowsocks/simple-obfs)
 
-On your client
+*Description:* A simple obfuscating tool, designed as plugin server of shadowsocks.
 
-```sh
-ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "mode=quic;host=mydomain.me"
-```
 
-### Shadowsocks over gRPC
+Support is added in ShadowSocks LuCI interface and init scripts.
 
-On your server
 
-```sh
-ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;mode=grpc"
-```
+## SpeedTestC
+*Source:* [https://github.com/mobrembski/SpeedTestC](https://github.com/mobrembski/SpeedTestC)
 
-On your client
+*Description:* Client for SpeedTest.net infrastructure written in pure C99 standard using only POSIX libraries.
 
-```sh
-ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "mode=grpc"
-```
+Used to test speed. No LuCI interface.
 
-### Shadowsocks over gRPC with TLS
 
-On your server
+## Nginx
+*Source:* [https://www.nginx.org](https://www.nginx.org)
 
-```sh
-ss-server -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "server;mode=grpc;tls;host=mydomain.me"
-```
+*Description:* nginx is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server. 
 
-On your client
 
-```sh
-ss-local -c config.json -p 443 --plugin v2ray-plugin --plugin-opts "tls;mode=grpc;host=mydomain.me"
-```
+A LuCI interface for TCP/UDP stream is added. Used for TCP/UDP failover.
 
-### Issue a cert for TLS and QUIC
 
-`v2ray-plugin` will look for TLS certificates signed by [acme.sh](https://github.com/acmesh-official/acme.sh) by default.
-Here's some sample commands for issuing a certificate using CloudFlare.
-You can find commands for issuing certificates for other DNS providers at acme.sh.
+## luci-proto-ipv6
+*Source:* [https://github.com/openwrt/luci](https://github.com/openwrt/luci)
 
-```sh
-curl https://get.acme.sh | sh
-~/.acme.sh/acme.sh --issue --dns dns_cf -d mydomain.me
-```
+*Description:* Luci support for DHCPv6/6in4/6to4/6rd/DS-Lite/aiccu
 
-Alternatively, you can specify path to your certificates using option `cert` and `key`.
+Added support to gateway set by user for 6in4. Used for IPv6 over the glorytun IPv4 VPN.
 
-### Use `certRaw` to pass certificate
 
-Instead of using `cert` to pass the certificate file, `certRaw` could be used to pass in PEM format certificate, that is the content between `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` without the line breaks.
+## luci-omr-bypass
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-omr-bypass](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-omr-bypass)
+
+*Description:* Luci interface to bypass domains, IPs and networks with shadowsocks
+
+Domains, IPs, networks and protocol (using DPI) added are bypassed when shadowsocks is used. This can be used when VPS IP is blacklisted from some sites.
+
+
+## omr-tracker
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/omr-tracker](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/omr-tracker)
+
+*Description:* Track connection status. This check if gateway is up then check if the connection work. If it's not working this execute scripts. This also detect if ShadowSocks is up or not.
+
+This is used for OpenMPTCProuter failover.
+
+
+## luci-omr-tracker
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-omr-tracker](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-omr-tracker)
+
+*Description:* Luci interface to omr-tracker
+
+Interface to omr-tracker.
+
+
+## luci-app-iperf
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-iperf](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-iperf)
+
+*Description:* Luci interface to iPerf
+
+
+## omr-6in4
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/omr-6in4](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/omr-6in4)
+
+*Description:* Set tunnel configuration by tracking tunnel configuration.
+
+
+## omr-update
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/omr-update](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/omr-update)
+
+*Description:* Update old config with new settings.
+
+
+## luci-app-mptcp
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-mptcp](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-mptcp)
+
+*Description:* Luci interface for all MPTCP settings
+
+
+## luci-app-openmptcprouter
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-openmptcprouter](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/luci-app-openmptcprouter)
+
+*Description:* Wizard for OpenMPTCProuter settings and status page
+
+
+## mptcp
+*Source:* [https://github.com/Ysurac/openmptcprouter-feeds/tree/master/mptcp](https://github.com/Ysurac/openmptcprouter-feeds/tree/master/mptcp)
+
+*Description:* This package set all MPTCP settings
+
+
+## ndisc6
+*Source:* [http://www.remlab.net/files/ndisc6](http://www.remlab.net/files/ndisc6)
+
+*Description:* An ICMPv6 neighbour discovery tool
+
+This is used to check if there is no other IPv6 route announced on the network
+
+
+## mlvpn
+*Source:* [https://github.com/markfoodyburton/MLVPN/tree/new-reorder](https://github.com/markfoodyburton/MLVPN/tree/new-reorder)
+
+*Description:* Multi-link VPN
+
+This is an other way to aggregate same latency connections
+
+
+## dsvpn
+*Source:* [https://github.com/jedisct1/dsvpn][https://github.com/jedisct1/dsvpn]
+
+*Description:* A Dead Simple VPN
+
+A simple TCP VPN
+
+
+## ndpi-netfilter2
+*Source:* [https://github.com/vel21ripn/nDPI](https://github.com/vel21ripn/nDPI)
+
+*Description:* Open Source Deep Packet Inspection Software Toolkit
+
+This is used to bypass a protocol
+
+
+## tracebox
+*Source:* [https://github.com/tracebox/tracebox](https://github.com/tracebox/tracebox)
+
+*Description:* A middlebox detection tool
+
+
+## Shortcut-FE
+*Source:* [https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe](https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe)
+
+*Description:* Shortcut is an in-Linux-kernel IP packet forwarding engine.
+
+
+## V2Ray
+*Source:* [https://github.com/v2fly/v2ray-core](https://github.com/v2fly/v2ray-core)
+
+*Description:* A platform for building proxies to bypass network restrictions.
+
+This is used as proxy, alternative to Shadowsocks
+
+
+
+# License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FYsurac%2Fopenmptcprouter-feeds.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FYsurac%2Fopenmptcprouter-feeds?ref=badge_large)
+
+## Translation status
+
+[![Translation status](https://weblate.openmptcprouter.com/widgets/omr/-/multi-auto.svg)](https://weblate.openmptcprouter.com/engage/omr/?utm_source=widget)
